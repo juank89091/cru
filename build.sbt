@@ -6,7 +6,6 @@ scalaVersion := "2.12.2"
 
 val phantomVersion              = "2.13.5"
 
-
 libraryDependencies ++=
   Seq(
     "com.outworkers"             %% "phantom-dsl"                  % phantomVersion,
@@ -18,9 +17,12 @@ libraryDependencies ++=
     "org.slf4j"                  % "slf4j-simple"                  % "1.6.2",
     "org.typelevel"              %% "cats-core"                    % "0.9.0",
     "com.softwaremill.quicklens" %% "quicklens"                    % "1.4.11",
-//    "io.grpc"                    % "grpc-netty"                    % scalapb.compiler.Version.grpcJavaVersion,
-//    "com.thesamet.scalapb"       %% "scalapb-runtime-grpc"         % scalapb.compiler.Version.scalapbVersion
+    "com.thesamet.scalapb"       %% "scalapb-runtime"              % scalapb.compiler.Version.scalapbVersion % "protobuf"
 
   )
+
+PB.targets in Compile := Seq(
+    scalapb.gen() -> (sourceManaged in Compile).value
+)
 
 
