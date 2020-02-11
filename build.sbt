@@ -1,12 +1,7 @@
-name := "cru"
-
-version := "0.1"
-
-scalaVersion := "2.12.2"
 
 val phantomVersion              = "2.13.5"
 
-libraryDependencies ++=
+lazy val `libs` =
   Seq(
     "com.outworkers"             %% "phantom-dsl"                  % phantomVersion,
     "org.apache.kafka"           % "kafka-clients"                 % "0.10.1.0",
@@ -21,8 +16,20 @@ libraryDependencies ++=
 
   )
 
-PB.targets in Compile := Seq(
-    scalapb.gen() -> (sourceManaged in Compile).value
+lazy val commonSettings = Seq(
+    version := "0.1",
+    scalaVersion := "2.12.2",
+    target := { baseDirectory.value / "target" },
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value
+    )
 )
 
+lazy val `core` = (project in file("books/core")).settings(commonSettings, libraryDependencies ++= `libs` )
 
+lazy val `kafka` = (project in file("books/kafka")).settings(commonSettings, libraryDependencies ++= `libs` ).dependsOn(core)
+
+lazy val `http` = (project in file("books/http")).settings(commonSettings, libraryDependencies ++= `libs` ).dependsOn(core)
+
+lazy val `root` = (project in file("."))
+  .aggregate(kafka, http, core)
